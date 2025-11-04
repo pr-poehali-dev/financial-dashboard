@@ -1,12 +1,37 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Icon from '@/components/ui/icon';
 
 export default function Index() {
   const [activeTab, setActiveTab] = useState('home');
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('food');
+  const [account, setAccount] = useState('tinkoff');
+  const [date, setDate] = useState('today');
+  const [comment, setComment] = useState('');
 
   const balance = 45280.50;
+  const categories = [
+    { id: 'food', label: 'Еда', emoji: '🍕', icon: 'UtensilsCrossed', color: '#FF6B6B' },
+    { id: 'transport', label: 'Транспорт', emoji: '⛽', icon: 'Car', color: '#6A5AE0' },
+    { id: 'entertainment', label: 'Развлечения', emoji: '🎮', icon: 'Gamepad2', color: '#00C896' },
+    { id: 'shopping', label: 'Покупки', emoji: '🛍️', icon: 'ShoppingBag', color: '#FEC6A1' },
+    { id: 'other', label: 'Другое', emoji: '📦', icon: 'MoreHorizontal', color: '#D6BCFA' }
+  ];
+
+  const accounts = [
+    { id: 'tinkoff', label: 'Tinkoff', emoji: '💳' },
+    { id: 'sber', label: 'Сбербанк', emoji: '🏦' },
+    { id: 'cash', label: 'Наличные', emoji: '💵' }
+  ];
+
   const expenses = [
     { category: 'Еда', amount: 12800, icon: 'UtensilsCrossed', percentage: 40, color: '#FF6B6B' },
     { category: 'Транспорт', amount: 6400, icon: 'Car', percentage: 20, color: '#6A5AE0' },
@@ -36,6 +61,13 @@ export default function Index() {
     { id: 'reports', label: 'Отчеты', icon: 'BarChart3' },
     { id: 'profile', label: 'Профиль', icon: 'User' }
   ];
+
+  const handleSaveTransaction = () => {
+    console.log({ amount, category, account, date, comment });
+    setIsAddDialogOpen(false);
+    setAmount('');
+    setComment('');
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -164,6 +196,117 @@ export default function Index() {
             </div>
           </Card>
         </div>
+
+        <button
+          onClick={() => setIsAddDialogOpen(true)}
+          className="fixed bottom-24 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform z-50"
+        >
+          <Icon name="Plus" size={28} />
+        </button>
+
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                <Icon name="Plus" size={24} className="text-primary" />
+                Добавить операцию
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">Сумма</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-semibold text-muted-foreground">₽</span>
+                  <Input
+                    type="number"
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="pl-8 text-lg font-semibold h-12"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">Категория</label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{cat.emoji}</span>
+                          <span>{cat.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">Счет</label>
+                <Select value={account} onValueChange={setAccount}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accounts.map((acc) => (
+                      <SelectItem key={acc.id} value={acc.id}>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{acc.emoji}</span>
+                          <span>{acc.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">Дата</label>
+                <Select value={date} onValueChange={setDate}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="today">Сегодня</SelectItem>
+                    <SelectItem value="yesterday">Вчера</SelectItem>
+                    <SelectItem value="custom">Выбрать дату</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">Комментарий</label>
+                <Textarea
+                  placeholder="Добавьте описание..."
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  className="resize-none h-20"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsAddDialogOpen(false)}
+                  className="flex-1 h-12"
+                >
+                  Отменить
+                </Button>
+                <Button
+                  onClick={handleSaveTransaction}
+                  className="flex-1 h-12 bg-primary hover:bg-primary/90"
+                >
+                  Сохранить
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <nav className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg">
           <div className="max-w-md mx-auto flex justify-around py-3">
