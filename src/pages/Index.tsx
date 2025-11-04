@@ -76,6 +76,7 @@ export default function Index() {
                 <Button 
                   size="lg" 
                   className="w-full sm:w-auto text-lg px-12 py-6 rounded-xl shadow-2xl hover:scale-105 transition-transform"
+                  onClick={() => window.location.href = '/login'}
                 >
                   <Icon name="LogIn" size={24} className="mr-3" />
                   Авторизация
@@ -84,6 +85,7 @@ export default function Index() {
                   size="lg" 
                   variant="outline"
                   className="w-full sm:w-auto text-lg px-12 py-6 rounded-xl bg-white/95 hover:bg-white border-2 hover:scale-105 transition-transform shadow-xl"
+                  onClick={() => window.location.href = '/register'}
                 >
                   <Icon name="UserPlus" size={24} className="mr-3" />
                   Регистрация
